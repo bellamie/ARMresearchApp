@@ -3,7 +3,6 @@ package com.example.bellamie.armapp;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
-import android.support.constraint.solver.Cache;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -27,6 +26,9 @@ import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.IOException;
 import java.util.ArrayList;
+
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -41,8 +43,10 @@ public class MainActivity extends AppCompatActivity {
 
     private String age;
     private String gender;
+    ArrayList<Integer> counter;
 
     private ArrayList<Integer> sounds;
+    private ArrayList<Integer> colors;
 
 
     @Override
@@ -55,13 +59,6 @@ public class MainActivity extends AppCompatActivity {
         neutralbtn = (Button) findViewById(R.id.neutral_btn);
         sadbtn = (Button) findViewById(R.id.sad_btn);
 
-        sounds = new ArrayList<>();
-
-        for(int i =1; i<=12; i++){
-            int sound = getResources().getIdentifier("sound" + i, "raw", getPackageName());
-            sounds.add(sound);
-        }
-
         builder = new AlertDialog.Builder(MainActivity.this);
         DiskBasedCache cache = new DiskBasedCache(getCacheDir(), 1024*1024);
         BasicNetwork network = new BasicNetwork(new HurlStack());
@@ -71,11 +68,18 @@ public class MainActivity extends AppCompatActivity {
         neutralbtn.setOnClickListener(new ButtonClickListener());
         sadbtn.setOnClickListener(new ButtonClickListener());
 
-
         age = DemographicInfo.mInstance.getAge();
         gender = DemographicInfo.mInstance.getGender();
 
+        counter = new ArrayList<Integer>();
+        for(int i = 1; i<13; i++){
+            counter.add(i);
+        }
+        Collections.shuffle(counter);
 
+        colors = new ArrayList<>();
+        colors.addAll(Arrays.asList(R.color.yellow, R.color.white, R.color.darkblue, R.color.yellow, R.color.white, R.color.darkblue, R.color.yellow, R.color.white, R.color.darkblue));
+        Collections.shuffle(colors);
     }
 
     /**
@@ -88,16 +92,17 @@ public class MainActivity extends AppCompatActivity {
         StopWatch stopWatch = new StopWatch();
         String song = "";
         double millis = 0.0;
-        int counter = 1;
+        int counter_idx = 0;
 
         @Override
         public void onClick(View view) {
-            root.setBackgroundColor(ContextCompat.getColor(this, R.color.darkblue));
             if(!mediaPlayer.isPlaying()){
                 mediaPlayer.reset();
                 stopWatch.reset();
 
-                Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + counter);
+                Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + counter.get(counter_idx));
+                root.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), colors.get(counter_idx)));
+                counter_idx++;
                 String message1 = myUri.toString();
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
@@ -145,10 +150,10 @@ public class MainActivity extends AppCompatActivity {
 
                         params.put("gender", gender);
                         params.put("age", age);
-                        params.put("duration", Double.toString(millis));
+                        params.put("reactiontime", Double.toString(millis));
+                        params.put("humm", ""+counter_idx);
                         //params.put("color", color);
-                        //params.put("humming", humming);
-
+                        //params.put("emotion", emotion);
                         return params;
                     }
                 };
