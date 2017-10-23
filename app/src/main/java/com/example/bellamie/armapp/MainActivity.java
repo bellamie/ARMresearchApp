@@ -44,6 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private String age;
     private String gender;
     ArrayList<Integer> counter;
+    Map<Integer, String> hummdict;
+    String []hummdescr;
 
     private ArrayList<Integer> sounds;
     private ArrayList<Integer> colors;
@@ -70,16 +72,18 @@ public class MainActivity extends AppCompatActivity {
 
         age = DemographicInfo.mInstance.getAge();
         gender = DemographicInfo.mInstance.getGender();
-
-        counter = new ArrayList<Integer>();
-        for(int i = 1; i<13; i++){
-            counter.add(i);
-        }
-        Collections.shuffle(counter);
+        hummdict = new HashMap<Integer, String>();
+        hummdescr = new String[]{"f1happy","f1neutral","f1sad","f2happy","f2neutral", "f2sad","m1happy","m1neutral", "m1sad","m2happy","m2neutral","m2sad"};
 
         colors = new ArrayList<>();
         colors.addAll(Arrays.asList(R.color.yellow, R.color.white, R.color.darkblue, R.color.yellow, R.color.white, R.color.darkblue, R.color.yellow, R.color.white, R.color.darkblue));
         Collections.shuffle(colors);
+
+        counter =new ArrayList<Integer>();
+        for(int i = 1; i<13; i++){
+            counter.add(i);
+            hummdict.put(i,hummdescr[i-1]);}
+        Collections.shuffle(counter);
     }
 
     /**
@@ -151,13 +155,17 @@ public class MainActivity extends AppCompatActivity {
                         params.put("gender", gender);
                         params.put("age", age);
                         params.put("reactiontime", Double.toString(millis));
-                        params.put("humm", ""+counter_idx);
                         //params.put("color", color);
                         //params.put("emotion", emotion);
+                        //params.put("humming", humming);
+                        params.put("humming", hummdict.get(counter.get(counter_idx)));
+
                         return params;
                     }
                 };
                 MySingleton.getInstance(MainActivity.this).addTorequestque(stringRequest);
+                counter_idx++;
+
             }
         }
     }
