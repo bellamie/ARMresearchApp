@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.ListIterator;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
@@ -43,12 +44,17 @@ public class MainActivity extends AppCompatActivity {
 
     private String age;
     private String gender;
-    ArrayList<Integer> counter;
-    Map<Integer, String> hummdict;
-    String []hummdescr;
+    private Integer[]humms;
+    private Map<Integer, String> hummdict;
+    private String []hummdescr;
 
     private ArrayList<Integer> sounds;
-    private ArrayList<Integer> colors;
+    private ArrayList<Integer> colorlist;
+    private ArrayList<Integer> hummlist;
+    private ArrayList<Integer> rand_index;
+    private ListIterator idx_iterator;
+
+
 
 
     @Override
@@ -62,7 +68,7 @@ public class MainActivity extends AppCompatActivity {
         sadbtn = (Button) findViewById(R.id.sad_btn);
 
         builder = new AlertDialog.Builder(MainActivity.this);
-        DiskBasedCache cache = new DiskBasedCache(getCacheDir(), 1024*1024);
+        DiskBasedCache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024);
         BasicNetwork network = new BasicNetwork(new HurlStack());
 
 
@@ -73,19 +79,34 @@ public class MainActivity extends AppCompatActivity {
         age = DemographicInfo.mInstance.getAge();
         gender = DemographicInfo.mInstance.getGender();
         hummdict = new HashMap<Integer, String>();
-        hummdescr = new String[]{"f1happy","f1neutral","f1sad","f2happy","f2neutral", "f2sad","m1happy","m1neutral", "m1sad","m2happy","m2neutral","m2sad"};
+        hummdescr = new String[]{"f1happy", "f1neutral", "f1sad", "f2happy", "f2neutral", "f2sad", "m1happy", "m1neutral", "m1sad", "m2happy", "m2neutral", "m2sad"};
+        // Create two Lists: One that contains colors as int and the other hummings as int.
+        // Together they all different stimuli.
+        // humms = [1-12, 1-12, 1-12]
+        humms = new Integer[36];
+        for (int i = 0; i < 36; i++) {
+            if (i < 12) {
+                humms[i] = i + 1;
+                hummdict.put(i, hummdescr[i]);
+            } else {
+                humms[i] = i % 12 + 1;
+            }
+        }
 
-        colors = new ArrayList<>();
-        colors.addAll(Arrays.asList(R.color.yellow, R.color.white, R.color.darkblue, R.color.yellow, R.color.white, R.color.darkblue, R.color.yellow, R.color.white, R.color.darkblue));
-        Collections.shuffle(colors);
+        hummlist = new ArrayList<>();
+        hummlist.addAll(Arrays.asList(humms));
 
-        counter =new ArrayList<Integer>();
-        for(int i = 1; i<13; i++){
-            counter.add(i);
-            hummdict.put(i,hummdescr[i-1]);}
-        Collections.shuffle(counter);
+        colorlist = new ArrayList<>();
+        colorlist.addAll(Arrays.asList(R.color.yellow, R.color.yellow, R.color.yellow, R.color.yellow, R.color.yellow, R.color.yellow, R.color.yellow, R.color.yellow, R.color.yellow, R.color.yellow, R.color.yellow, R.color.yellow,
+                R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white,
+                R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue));
+        rand_index = new ArrayList<>();
+        for (int j = 0; j < 36; j++) {
+            rand_index.add(j);
+        }
+        Collections.shuffle(rand_index);
+        idx_iterator = rand_index.listIterator();
     }
-
     /**
      * This class is the buttonclick listener
      * if one of the btns is pressed, a new sequence of the task start
@@ -103,9 +124,10 @@ public class MainActivity extends AppCompatActivity {
             if(!mediaPlayer.isPlaying()){
                 mediaPlayer.reset();
                 stopWatch.reset();
+                counter_idx = (int)idx_iterator.next();
 
-                Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + counter.get(counter_idx));
-                root.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), colors.get(counter_idx)));
+                Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + hummlist.get(counter_idx));
+                root.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), colorlist.get(counter_idx)));
                 counter_idx++;
                 String message1 = myUri.toString();
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
@@ -158,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
                         //params.put("color", color);
                         //params.put("emotion", emotion);
                         //params.put("humming", humming);
-                        params.put("humming", hummdict.get(counter.get(counter_idx)));
+                        params.put("humming", hummdict.get(hummlist.get(counter_idx)));
 
                         return params;
                     }
