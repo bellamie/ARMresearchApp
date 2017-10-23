@@ -4,12 +4,14 @@ import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.support.constraint.solver.Cache;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -24,6 +26,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -34,10 +37,12 @@ public class MainActivity extends AppCompatActivity {
     private Button happybtn, neutralbtn, sadbtn;
     private String serverURL = "http://dennisdemenis.pythonanywhere.com/";
     private AlertDialog.Builder builder;
-
+    private View root;
 
     private String age;
     private String gender;
+
+    private ArrayList<Integer> sounds;
 
 
     @Override
@@ -45,9 +50,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        root = (LinearLayout) findViewById(R.id.root);
         happybtn = (Button) findViewById(R.id.happy_btn);
         neutralbtn = (Button) findViewById(R.id.neutral_btn);
         sadbtn = (Button) findViewById(R.id.sad_btn);
+
+        sounds = new ArrayList<>();
+
+        for(int i =1; i<=12; i++){
+            int sound = getResources().getIdentifier("sound" + i, "raw", getPackageName());
+            sounds.add(sound);
+        }
 
         builder = new AlertDialog.Builder(MainActivity.this);
         DiskBasedCache cache = new DiskBasedCache(getCacheDir(), 1024*1024);
@@ -79,6 +92,7 @@ public class MainActivity extends AppCompatActivity {
 
         @Override
         public void onClick(View view) {
+            root.setBackgroundColor(ContextCompat.getColor(this, R.color.darkblue));
             if(!mediaPlayer.isPlaying()){
                 mediaPlayer.reset();
                 stopWatch.reset();
