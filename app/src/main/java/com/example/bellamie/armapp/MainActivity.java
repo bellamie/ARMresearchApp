@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity {
     private ArrayList<Integer> sounds;
     private ArrayList<Integer> colors;
 
+    private ButtonClickListener happyListener, neutralListener, sadListener;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,10 +67,13 @@ public class MainActivity extends AppCompatActivity {
         DiskBasedCache cache = new DiskBasedCache(getCacheDir(), 1024*1024);
         BasicNetwork network = new BasicNetwork(new HurlStack());
 
+        happyListener = new ButtonClickListener();
+        neutralListener = new ButtonClickListener();
+        sadListener = new ButtonClickListener();
 
-        happybtn.setOnClickListener(new ButtonClickListener());
-        neutralbtn.setOnClickListener(new ButtonClickListener());
-        sadbtn.setOnClickListener(new ButtonClickListener());
+        happybtn.setOnClickListener(happyListener);
+        neutralbtn.setOnClickListener(neutralListener);
+        sadbtn.setOnClickListener(sadListener);
 
         age = DemographicInfo.mInstance.getAge();
         gender = DemographicInfo.mInstance.getGender();
@@ -103,7 +108,6 @@ public class MainActivity extends AppCompatActivity {
             if(!mediaPlayer.isPlaying()){
                 mediaPlayer.reset();
                 stopWatch.reset();
-
                 Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + counter.get(counter_idx));
                 root.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), colors.get(counter_idx)));
                 counter_idx++;
