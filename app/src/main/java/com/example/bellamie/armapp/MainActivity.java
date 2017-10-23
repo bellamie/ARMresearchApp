@@ -35,7 +35,6 @@ public class MainActivity extends AppCompatActivity {
     private String serverURL = "http://dennisdemenis.pythonanywhere.com/";
     private AlertDialog.Builder builder;
 
-    private DemographicInfo di;
 
     private String age;
     private String gender;
@@ -59,10 +58,9 @@ public class MainActivity extends AppCompatActivity {
         neutralbtn.setOnClickListener(new ButtonClickListener());
         sadbtn.setOnClickListener(new ButtonClickListener());
 
-        di = new DemographicInfo();
 
-        age = di.getAge();
-        gender = di.getGender();
+        age = DemographicInfo.mInstance.getAge();
+        gender = DemographicInfo.mInstance.getGender();
 
 
     }

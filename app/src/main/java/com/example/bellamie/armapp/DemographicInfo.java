@@ -1,6 +1,7 @@
 package com.example.bellamie.armapp;
 
 import android.content.Intent;
+import android.support.annotation.IdRes;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -13,20 +14,37 @@ import android.widget.TextView;
 
 public class DemographicInfo extends AppCompatActivity {
 
+    public static final DemographicInfo mInstance = new DemographicInfo();
+
     private static final String TAG = "BP";
+
     private RadioGroup mGender;
     private RadioButton mMale, mFemale;
     private TextView mAge;
     private Button mNext;
+    private String gender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_demographic_info);
 
+        gender = "";
+
         mGender = (RadioGroup) findViewById(R.id.gender);
-        mMale = (RadioButton) mGender.findViewById(R.id.male);
-        mFemale = (RadioButton) mGender.findViewById(R.id.female);
+        mMale = mGender.findViewById(R.id.male);
+        mFemale = mGender.findViewById(R.id.female);
+
+        mGender.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(RadioGroup radioGroup, @IdRes int i) {
+                if (mFemale.isChecked()){
+                    gender = "Female";
+                } else if(mMale.isChecked()){
+                    gender = "Male";
+                }
+            }
+        });
 
         mAge = (EditText) findViewById(R.id.age);
         mNext = (Button) findViewById(R.id.next);
@@ -48,13 +66,7 @@ public class DemographicInfo extends AppCompatActivity {
     }
 
     public String getGender(){
-        if (mMale.isChecked()){
-            return "Male";
-        } else if (mFemale.isChecked()){
-            return "Female";
-        }else{
-            return "something went wrong with radiobuttons";
-        }
+        return gender;
     }
 
     public String getAge(){
