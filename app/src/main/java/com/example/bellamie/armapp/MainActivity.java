@@ -24,6 +24,8 @@ import com.android.volley.toolbox.StringRequest;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -39,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
 
     private String age;
     private String gender;
+    ArrayList<Integer> counter;
 
 
     @Override
@@ -64,6 +67,10 @@ public class MainActivity extends AppCompatActivity {
         age = di.getAge();
         gender = di.getGender();
 
+        counter =new ArrayList<Integer>();
+        for(int i = 1; i<13; i++){counter.add(i);}
+        Collections.shuffle(counter);
+
 
     }
 
@@ -77,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         StopWatch stopWatch = new StopWatch();
         String song = "";
         double millis = 0.0;
-        int counter = 1;
+        int counter_idx = 0;
 
         @Override
         public void onClick(View view) {
@@ -85,7 +92,8 @@ public class MainActivity extends AppCompatActivity {
                 mediaPlayer.reset();
                 stopWatch.reset();
 
-                Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + counter);
+                Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + counter.get(counter_idx));
+                counter_idx++;
                 String message1 = myUri.toString();
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
