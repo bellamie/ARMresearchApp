@@ -41,6 +41,8 @@ public class MainActivity extends AppCompatActivity {
     private String age;
     private String gender;
     ArrayList<Integer> counter;
+    Map<Integer, String> hummdict;
+    String []hummdescr;
 
 
     @Override
@@ -64,12 +66,14 @@ public class MainActivity extends AppCompatActivity {
 
         age = DemographicInfo.mInstance.getAge();
         gender = DemographicInfo.mInstance.getGender();
+        hummdict = new HashMap<Integer, String>();
+        hummdescr = new String[]{"f1happy","f1neutral","f1sad","f2happy","f2neutral", "f2sad","m1happy","m1neutral", "m1sad","m2happy","m2neutral","m2sad"};
 
         counter =new ArrayList<Integer>();
-        for(int i = 1; i<13; i++){counter.add(i);}
+        for(int i = 1; i<13; i++){
+            counter.add(i);
+            hummdict.put(i,hummdescr[i-1]);}
         Collections.shuffle(counter);
-
-
     }
 
     /**
@@ -91,7 +95,6 @@ public class MainActivity extends AppCompatActivity {
                 stopWatch.reset();
 
                 Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + counter.get(counter_idx));
-                counter_idx++;
                 String message1 = myUri.toString();
                 mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
@@ -142,11 +145,15 @@ public class MainActivity extends AppCompatActivity {
                         params.put("duration", Double.toString(millis));
                         //params.put("color", color);
                         //params.put("humming", humming);
+                        params.put("humming", hummdict.get(counter.get(counter_idx)));
+
 
                         return params;
                     }
                 };
                 MySingleton.getInstance(MainActivity.this).addTorequestque(stringRequest);
+                counter_idx++;
+
             }
         }
     }
