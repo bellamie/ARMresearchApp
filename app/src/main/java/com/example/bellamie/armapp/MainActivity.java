@@ -151,9 +151,6 @@ public class MainActivity extends AppCompatActivity {
                 stopWatch.start();
                 mediaPlayer.start();
                 root.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), colorlist.get(counter_idx)));
-
-
-
             }
         });
     }
@@ -210,14 +207,15 @@ public class MainActivity extends AppCompatActivity {
                     params.put("reactiontime", Double.toString(millis));
                     params.put("color", colorlist.get(counter_idx).toString());
                     params.put("emotion", view.getResources().getResourceEntryName(view.getId()));
-                    params.put("humming", hummdict.get(hummlist.get(counter_idx-1)));
+                    params.put("humm", hummdict.get(hummlist.get(counter_idx-1)));
+                    params.put("name", "anonymous");
 
 
                     Log.i(TAG, "inside getParams:" + params);
                     return params;
                 }
             };
-            MySingleton.getInstance(MainActivity.this).addTorequestque(stringRequest);
+            MySingleton.getInstance(MainActivity.this).addToRequestQueue(stringRequest);
 
 
             mediaPlayer.reset();
