@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Cache;
 import com.android.volley.Network;
+import com.android.volley.NetworkResponse;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -28,6 +29,7 @@ import com.android.volley.toolbox.StringRequest;
 import org.apache.commons.lang3.time.StopWatch;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 
 import java.util.Arrays;
@@ -51,14 +53,11 @@ public class MainActivity extends AppCompatActivity {
     private AlertDialog.Builder builder;
 
     // Information needed for experiment
-    private String age;
-    private String gender;
+    private String age, gender;
     private Integer[]humms;
     private Map<Integer, String> hummdict;
     private String []hummdescr;
-    private ArrayList<Integer> colorlist;
-    private ArrayList<Integer> hummlist;
-    private ArrayList<Integer> rand_index;
+    private ArrayList<Integer> colorlist, hummlist, rand_index;
     private ListIterator idx_iterator;
     private MediaPlayer mediaPlayer;
     private StopWatch stopWatch;
@@ -88,8 +87,10 @@ public class MainActivity extends AppCompatActivity {
         builder = new AlertDialog.Builder(MainActivity.this);
         Cache cache = new DiskBasedCache(getCacheDir(), 1024 * 1024);
         Network network = new BasicNetwork(new HurlStack());
-        age = DemographicInfo.mInstance.getAge();
-        gender = DemographicInfo.mInstance.getGender();
+        age = getIntent().getExtras().getString("age");
+        Log.i(TAG, "Age inside initilizevariables: " + age);
+        gender = getIntent().getExtras().getString("gender");
+        Log.i(TAG, "gender inside the initializeVariables: " + gender);
         mediaPlayer = new MediaPlayer();
         stopWatch = new StopWatch();
         counter_idx = 0;
@@ -187,8 +188,17 @@ public class MainActivity extends AppCompatActivity {
                         @Override
                         public void onErrorResponse(VolleyError error) {
                             Log.i(TAG, "Inside the error response");
-                            Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
-                            error.printStackTrace();
+                            Toast.makeText(MainActivity.this, "error in onResponse", Toast.LENGTH_SHORT).show();
+                            NetworkResponse errorRes = error.networkResponse;
+                            String stringData = "";
+                            if(errorRes != null && errorRes.data != null){
+                                try {
+                                    stringData = new String(errorRes.data,"UTF-8");
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+                            }
+
                         }
                     }){
                 @Override

@@ -14,15 +14,14 @@ import android.widget.TextView;
 
 public class DemographicInfo extends AppCompatActivity {
 
-    public static final DemographicInfo mInstance = new DemographicInfo();
-
     private static final String TAG = "BP";
 
     private RadioGroup mGender;
     private RadioButton mMale, mFemale;
-    private TextView mAge;
+    private EditText mAge;
     private Button mNext;
     private String gender;
+    private String age;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,9 +53,13 @@ public class DemographicInfo extends AppCompatActivity {
             public void onClick(View view) {
                 if(mMale.isChecked() || mFemale.isChecked()){
                     Log.i(TAG, "Gender is chosen");
-                    if(mAge.getText() != null){
-                        Log.i(TAG, "Something is filled in the age field");
+                    age = mAge.getText().toString();
+                    Log.i(TAG, "Age of user: " + age);
+                    if(age != null){
+                        Log.i(TAG, "Something is filled in the age field: " + age);
                         Intent mainActivityIntent = new Intent(DemographicInfo.this, MainActivity.class);
+                        mainActivityIntent.putExtra("age", age);
+                        mainActivityIntent.putExtra("gender", gender);
                         startActivity(mainActivityIntent);
                         Log.i(TAG, "Next button is clicked");
                     }
@@ -73,11 +76,6 @@ public class DemographicInfo extends AppCompatActivity {
 
     public String getAge(){
         Log.i(TAG, "Getter for Age is accessed");
-        if (mAge != null){
-            return (String) mAge.getText();
-        }
-        else{
-            return "Something went wrong with the age string";
-        }
+        return age;
     }
 }
