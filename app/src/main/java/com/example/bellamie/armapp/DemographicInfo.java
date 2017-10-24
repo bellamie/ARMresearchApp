@@ -58,18 +58,21 @@ public class DemographicInfo extends AppCompatActivity {
                         Log.i(TAG, "Something is filled in the age field");
                         Intent mainActivityIntent = new Intent(DemographicInfo.this, MainActivity.class);
                         startActivity(mainActivityIntent);
+                        Log.i(TAG, "Next button is clicked");
                     }
                 }
-                Log.i(TAG, "Something went wrong with the radiobuttons");
+
             }
         });
     }
 
     public String getGender(){
+        Log.i(TAG, "Getter for gender is accessed");
         return gender;
     }
 
     public String getAge(){
+        Log.i(TAG, "Getter for Age is accessed");
         if (mAge != null){
             return (String) mAge.getText();
         }

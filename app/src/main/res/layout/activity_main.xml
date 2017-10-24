@@ -7,7 +7,17 @@
     tools:context="com.example.bellamie.armapp.MainActivity"
     android:id="@+id/root">
 
+    <Button
+        android:id="@+id/startExperiment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="START EXPERIMENT"
+        android:visibility="visible"/>
+
     <LinearLayout
+        android:id="@+id/emotion_panel"
+        android:visibility="gone"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
