@@ -1,5 +1,6 @@
 package com.example.bellamie.armapp;
 
+import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -137,14 +138,14 @@ public class MainActivity extends AppCompatActivity {
         initializeVariables();
         randomizeVariables();
 
+        counter_idx = (int) idx_iterator.next();
+
         startbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 startbtn.setVisibility(View.GONE);
                 emotionPanel.setVisibility(View.VISIBLE);
                 startbtn.setText("Next");
-
-                counter_idx = (int) idx_iterator.next();
 
                 stopWatch.start();
                 mediaPlayer.start();
@@ -163,95 +164,78 @@ public class MainActivity extends AppCompatActivity {
     private class ButtonClickListener implements View.OnClickListener{
 
         double millis = 0.0;
-        Boolean hasPlayed = false;
 
         @Override
         public void onClick(final View view) {
             Log.i(TAG, "Inside the onClick method from the ButtonClickListener: " + view.getResources().getResourceEntryName(view.getId()));
 
-            // Check if the sound for this round has already been played
-            if(hasPlayed){
-                Log.i(TAG, "mediaplayer if statement is not playing");
-                mediaPlayer.reset();
-                stopWatch.reset();
+            mediaPlayer.stop();
+            stopWatch.stop();
+            millis = stopWatch.getTime();
 
-                Log.i(TAG, "view id =" + view.getResources().getResourceEntryName(view.getId()));
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, serverURL,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.i(TAG, "inside the onResponse function");
+                            builder.setTitle("Server Response");
+                            builder.setMessage("Resonse: " + response);
+                            AlertDialog alertDialog = builder.create();
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.i(TAG, "Inside the error response");
+                            Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
+                            error.printStackTrace();
+                        }
+                    }){
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> params = new HashMap<String, String>();
 
-                counter_idx = (int)idx_iterator.next();
+                    params.put("gender", gender);
+                    params.put("age", age);
+                    params.put("reactiontime", Double.toString(millis));
+                    params.put("color", colorlist.get(counter_idx).toString());
+                    params.put("emotion", view.getResources().getResourceEntryName(view.getId()));
+                    params.put("humming", hummdict.get(hummlist.get(counter_idx-1)));
 
-                Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + hummlist.get(counter_idx));
-                root.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), colorlist.get(counter_idx)));
 
-                String message1 = myUri.toString();
-                mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
-
-                try{
-                    Log.i(TAG, "tyring to setDataSource");
-                    mediaPlayer.setDataSource(getApplicationContext(), myUri);
-                    Log.i(TAG, "URI = " + message1);
-                }catch (IOException e){
-                    e.printStackTrace();
+                    Log.i(TAG, "inside getParams:" + params);
+                    return params;
                 }
-                try{
-                    Log.i(TAG, "trying to prepare the mediaplayer");
-                    mediaPlayer.prepare();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                Log.i(TAG, "trying to start the mediaplayer");
-                hasPlayed = false;
+            };
+            MySingleton.getInstance(MainActivity.this).addTorequestque(stringRequest);
+
+
+            mediaPlayer.reset();
+            stopWatch.reset();
+
+            counter_idx = (int)idx_iterator.next();
+
+            Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + hummlist.get(counter_idx));
+            root.setBackgroundColor(Color.WHITE);
+
+            String message1 = myUri.toString();
+            mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
+
+            try{
+                Log.i(TAG, "tyring to setDataSource");
+                mediaPlayer.setDataSource(getApplicationContext(), myUri);
+                Log.i(TAG, "URI = " + message1);
+            }catch (IOException e){
+                e.printStackTrace();
             }
-            else{
-                Log.i(TAG, "When the sound needs to be played");
-
-                mediaPlayer.start();
-                stopWatch.start();
-
-
-                mediaPlayer.stop();
-                stopWatch.stop();
-                millis = stopWatch.getTime();
-
-                StringRequest stringRequest = new StringRequest(Request.Method.POST, serverURL,
-                        new Response.Listener<String>() {
-                            @Override
-                            public void onResponse(String response) {
-                                Log.i(TAG, "inside the onResponse function");
-                                builder.setTitle("Server Response");
-                                builder.setMessage("Resonse: " + response);
-                                AlertDialog alertDialog = builder.create();
-                            }
-                        },
-                        new Response.ErrorListener() {
-                            @Override
-                            public void onErrorResponse(VolleyError error) {
-                                Log.i(TAG, "Inside the error response");
-                                Toast.makeText(MainActivity.this, "error", Toast.LENGTH_SHORT).show();
-                                error.printStackTrace();
-                            }
-                        }){
-                    @Override
-                    protected Map<String, String> getParams() throws AuthFailureError {
-                        Map<String, String> params = new HashMap<String, String>();
-
-                        params.put("gender", gender);
-                        params.put("age", age);
-                        params.put("reactiontime", Double.toString(millis));
-                        params.put("color", colorlist.get(counter_idx).toString());
-                        params.put("emotion", view.getResources().getResourceEntryName(view.getId()));
-                        //params.put("color", color);
-                        //params.put("emotion", emotion);
-                        //params.put("humming", humming);
-                        params.put("humming", hummdict.get(hummlist.get(counter_idx-1)));
-
-
-                        Log.i(TAG, "inside getParams:" + params);
-                        return params;
-                    }
-                };
-                MySingleton.getInstance(MainActivity.this).addTorequestque(stringRequest);
-                Log.i(TAG, "Getting the instance from the Singleton");
+            try{
+                Log.i(TAG, "trying to prepare the mediaplayer");
+                mediaPlayer.prepare();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            startbtn.setVisibility(View.VISIBLE);
         }
     }
 }
+
