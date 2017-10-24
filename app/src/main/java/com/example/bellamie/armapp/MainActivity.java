@@ -239,7 +239,10 @@ public class MainActivity extends AppCompatActivity {
                         params.put("reactiontime", Double.toString(millis));
                         params.put("color", colorlist.get(counter_idx).toString());
                         params.put("emotion", view.getResources().getResourceEntryName(view.getId()));
-                        params.put("humming", hummdict.get(hummlist.get(counter_idx)));
+                        //params.put("color", color);
+                        //params.put("emotion", emotion);
+                        //params.put("humming", humming);
+                        params.put("humming", hummdict.get(hummlist.get(counter_idx-1)));
 
 
                         Log.i(TAG, "inside getParams:" + params);
