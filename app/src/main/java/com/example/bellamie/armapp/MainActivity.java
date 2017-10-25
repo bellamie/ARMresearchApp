@@ -161,6 +161,22 @@ public class MainActivity extends AppCompatActivity {
                     emotionPanel.setVisibility(View.VISIBLE);
                     startbtn.setText("Next");
 
+                    Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + hummlist.get(counter_idx));
+                    String message1 = myUri.toString();
+                    try{
+                        Log.i(TAG, "tyring to setDataSource");
+                        mediaPlayer.setDataSource(getApplicationContext(), myUri);
+                        Log.i(TAG, "URI = " + message1);
+                    }catch (IOException e){
+                        e.printStackTrace();
+                    }
+                    try{
+                        Log.i(TAG, "trying to prepare the mediaplayer");
+                        mediaPlayer.prepare();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+
                     stopWatch.start();
                     mediaPlayer.start();
                     root.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), colorlist.get(counter_idx)));
@@ -237,25 +253,11 @@ public class MainActivity extends AppCompatActivity {
 
             counter_idx = (int)idx_iterator.next();
 
-            Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + hummlist.get(counter_idx));
             root.setBackgroundColor(getResources().getColor(R.color.neutralGrey));
 
-            String message1 = myUri.toString();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
 
-            try{
-                Log.i(TAG, "tyring to setDataSource");
-                mediaPlayer.setDataSource(getApplicationContext(), myUri);
-                Log.i(TAG, "URI = " + message1);
-            }catch (IOException e){
-                e.printStackTrace();
-            }
-            try{
-                Log.i(TAG, "trying to prepare the mediaplayer");
-                mediaPlayer.prepare();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+
             startbtn.setVisibility(View.VISIBLE);
         }
     }
