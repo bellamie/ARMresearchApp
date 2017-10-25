@@ -5,7 +5,6 @@
       <module fileurl="file://$PROJECT_DIR$/ARMApp.iml" filepath="$PROJECT_DIR$/ARMApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/ARMresearchApp.iml" filepath="$PROJECT_DIR$/ARMresearchApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
 </project>

@@ -64,6 +64,7 @@ public class MainActivity extends AppCompatActivity {
     private MediaPlayer mediaPlayer;
     private StopWatch stopWatch;
     private int counter_idx;
+    private int iterations;
 
     public void initializeLayout(){
         root = (LinearLayout) findViewById(R.id.root);
@@ -97,6 +98,7 @@ public class MainActivity extends AppCompatActivity {
         stopWatch = new StopWatch();
         counter_idx = 0;
         username = createRandomUsername();
+        iterations = 4;
     }
 
     public String createRandomUsername(){
@@ -129,8 +131,10 @@ public class MainActivity extends AppCompatActivity {
                 R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white, R.color.white,
                 R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue, R.color.darkblue));
         rand_index = new ArrayList<>();
-        for (int j = 0; j < 36; j++) {
-            rand_index.add(j);
+        for (int i = 0; i<iterations; i++) {
+            for (int j = 0; j < 36; j++) {
+                rand_index.add(j);
+            }
         }
         Collections.shuffle(rand_index);
         idx_iterator = rand_index.listIterator();
