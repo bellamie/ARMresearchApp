@@ -5,7 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.bellamie.armapp.MainActivity"
-    android:id="@+id/root">
+    android:id="@+id/root"
+    android:background="@color/neutralGrey">
 
     <Button
         android:id="@+id/startExperiment"

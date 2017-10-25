@@ -37,6 +37,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Map;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     private View root;
     private LinearLayout emotionPanel;
     private ButtonClickListener happyListener, neutralListener, sadListener;
+    private String username;
 
 
     private String serverURL = "http://dennisdemenis.pythonanywhere.com/";
@@ -94,6 +96,13 @@ public class MainActivity extends AppCompatActivity {
         mediaPlayer = new MediaPlayer();
         stopWatch = new StopWatch();
         counter_idx = 0;
+        username = createRandomUsername();
+    }
+
+    public String createRandomUsername(){
+        Random randomGenerator = new Random();
+        int randomInt = randomGenerator.nextInt(1000);
+        return "user_" + randomInt;
     }
 
     public void randomizeVariables(){
@@ -139,20 +148,21 @@ public class MainActivity extends AppCompatActivity {
         initializeVariables();
         randomizeVariables();
 
-        counter_idx = (int) idx_iterator.next();
+        if(idx_iterator.hasNext()) {
+            counter_idx = (int) idx_iterator.next();
+            startbtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startbtn.setVisibility(View.GONE);
+                    emotionPanel.setVisibility(View.VISIBLE);
+                    startbtn.setText("Next");
 
-        startbtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                startbtn.setVisibility(View.GONE);
-                emotionPanel.setVisibility(View.VISIBLE);
-                startbtn.setText("Next");
-
-                stopWatch.start();
-                mediaPlayer.start();
-                root.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), colorlist.get(counter_idx)));
-            }
-        });
+                    stopWatch.start();
+                    mediaPlayer.start();
+                    root.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), colorlist.get(counter_idx)));
+                }
+            });
+        }
     }
 
     /**
@@ -208,7 +218,7 @@ public class MainActivity extends AppCompatActivity {
                     params.put("color", colorlist.get(counter_idx).toString());
                     params.put("emotion", view.getResources().getResourceEntryName(view.getId()));
                     params.put("humm", hummdict.get(hummlist.get(counter_idx-1)));
-                    params.put("name", "anonymous");
+                    params.put("name", username);
 
 
                     Log.i(TAG, "inside getParams:" + params);
@@ -224,7 +234,7 @@ public class MainActivity extends AppCompatActivity {
             counter_idx = (int)idx_iterator.next();
 
             Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + hummlist.get(counter_idx));
-            root.setBackgroundColor(Color.WHITE);
+            root.setBackgroundColor(getResources().getColor(R.color.neutralGrey));
 
             String message1 = myUri.toString();
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
