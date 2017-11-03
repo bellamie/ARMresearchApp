@@ -1,5 +1,6 @@
 package com.example.bellamie.armapp;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
@@ -65,6 +66,10 @@ public class MainActivity extends AppCompatActivity {
     private StopWatch stopWatch;
     private int counter_idx;
     private int iterations;
+    private int currentColorInt;
+    private String currentHumm;
+    private String convertedHumm;
+
 
     public void initializeLayout(){
         root = (LinearLayout) findViewById(R.id.root);
@@ -99,6 +104,9 @@ public class MainActivity extends AppCompatActivity {
         counter_idx = 0;
         username = createRandomUsername();
         iterations = 4;
+        currentHumm = "";
+        currentColorInt = 0;
+        convertedHumm = "";
     }
 
     public String createRandomUsername(){
@@ -124,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
         hummlist = new ArrayList<>();
+
         hummlist.addAll(Arrays.asList(humms));
 
         colorlist = new ArrayList<>();
@@ -161,6 +170,7 @@ public class MainActivity extends AppCompatActivity {
                     emotionPanel.setVisibility(View.VISIBLE);
                     startbtn.setText("Next");
 
+
                     Uri myUri = Uri.parse("android.resource://" + getPackageName() + "/raw/sound" + hummlist.get(counter_idx));
                     String message1 = myUri.toString();
                     try{
@@ -180,8 +190,55 @@ public class MainActivity extends AppCompatActivity {
                     stopWatch.start();
                     mediaPlayer.start();
                     root.setBackgroundColor(ContextCompat.getColor(getApplicationContext(), colorlist.get(counter_idx)));
+                    currentColorInt = ContextCompat.getColor(getApplicationContext(), colorlist.get(counter_idx));
+
+                    currentHumm = "sound" + hummlist.get(counter_idx);
+                    convertedHumm = getSound(currentHumm);
+                    Log.i(TAG, "color: " + currentColorInt + " humm: " + currentHumm);
                 }
+
             });
+        }
+    }
+
+    public String getColorConvert(int colorInt){
+        if (colorInt == -1){
+            return "white";
+        } else if (colorInt == -15132304){
+            return "blue";
+        }else if (colorInt == -256){
+            return "yellow";
+        }else
+            return "ConvertError";
+    }
+
+    public String getSound(String sound){
+        if(sound.equals("sound1")){
+            return "f1happy";
+        }else if(sound.equals("sound2")) {
+            return "f1neutral";
+        }else if(sound.equals("sound3")) {
+            return "f1sad";
+        }else if(sound.equals("sound4")) {
+            return "f2happy";
+        }else if(sound.equals("sound5")) {
+            return "f2neutral";
+        }else if(sound.equals("sound6")){
+            return "f2sad";
+        }else if(sound.equals("sound7")){
+            return "m1happy";
+        }else if (sound.equals("sound8")){
+            return "m1neutral";
+        }else if(sound.equals("sound9")){
+            return "m1sad";
+        }else if(sound.equals("sound10")){
+            return "m2happy";
+        }else if (sound.equals("sound11")){
+            return "m2neutral";
+        }else if (sound.equals("sound12")){
+            return "m2sad";
+        }else{
+            return "something went wrong with converting the sounds";
         }
     }
 
@@ -235,9 +292,9 @@ public class MainActivity extends AppCompatActivity {
                     params.put("gender", gender);
                     params.put("age", age);
                     params.put("reactiontime", Double.toString(millis));
-                    params.put("color", colorlist.get(counter_idx).toString());
+                    params.put("color", ""+ getColorConvert(currentColorInt));
                     params.put("emotion", view.getResources().getResourceEntryName(view.getId()));
-                    params.put("humm", hummdict.get(hummlist.get(counter_idx-1)));
+                    params.put("humm", convertedHumm);
                     params.put("name", username);
 
 
@@ -251,8 +308,12 @@ public class MainActivity extends AppCompatActivity {
             mediaPlayer.reset();
             stopWatch.reset();
 
-            counter_idx = (int)idx_iterator.next();
-
+            if (idx_iterator.hasNext()) {
+                counter_idx = (int) idx_iterator.next();
+            }else{
+                Intent endIntent = new Intent(MainActivity.this, EndScreen.class);
+                startActivity(endIntent);
+            }
             root.setBackgroundColor(getResources().getColor(R.color.neutralGrey));
 
             mediaPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
